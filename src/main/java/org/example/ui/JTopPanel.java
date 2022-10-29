@@ -102,14 +102,14 @@ public class JTopPanel extends JPanel {
         final String leftText = mLeftJTextField.getText();
 
         if (leftText == null || leftText.isBlank()) {
-            JOptionPane.showMessageDialog(this, "leftText required");
+            JOptionPane.showMessageDialog(this, "File 1 required");
             return;
         }
 
         final String rightText = mRightJTextField.getText();
 
         if (rightText == null || rightText.isBlank()) {
-            JOptionPane.showMessageDialog(this, "rightText required");
+            JOptionPane.showMessageDialog(this, "File 2 required");
             return;
         }
 
@@ -126,8 +126,24 @@ public class JTopPanel extends JPanel {
         final List<String> leftList = leftFuture.join();
         final List<String> rightList = rightFuture.join();
 
-        final List<DiffChange<String>> diffs = DiffUtil.createDiff(leftList, rightList);
-        mOnCompare.accept(diffs);
+        if(leftList.isEmpty()){
+            JOptionPane.showMessageDialog(this, "File 1 is empty");
+            return;
+        }
+
+        if(rightList.isEmpty()){
+            JOptionPane.showMessageDialog(this, "File 2 is empty");
+            return;
+        }
+
+        try {
+            final List<DiffChange<String>> diffs = DiffUtil.createDiff(leftList, rightList);
+            mOnCompare.accept(diffs);
+        }catch (Exception ex){
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Could not parse file");
+        }
+
 
     }
 

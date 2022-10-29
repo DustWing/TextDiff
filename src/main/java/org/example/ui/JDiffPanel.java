@@ -22,7 +22,6 @@ public class JDiffPanel<T> extends JPanel {
     private final List<DiffChange<T>> mValueList;
 
     private int mCurrentLine = 0;
-
     private int mFirstChange = 0;
     private int mLastChange = 0;// find the last change in diff
     private boolean inLeft;
@@ -143,6 +142,10 @@ public class JDiffPanel<T> extends JPanel {
     }
 
 
+    /**
+     * loop in DiffChange list to prepare the Text panes to show changes. Also calculate the first and the last change
+     * block
+     */
     private void updateTextPanes() {
 
         boolean foundFirstChange = false;
@@ -218,9 +221,10 @@ public class JDiffPanel<T> extends JPanel {
                     foundFirstChange = true;
                 }
 
-                if (mLastChange < i) {
-                    mLastChange = i;
-                }
+                if (i > 0 && !tDiffChange.type().equals(mValueList.get(i - 1).type()))
+                    if (mLastChange < i) {
+                        mLastChange = i;
+                    }
             }
 
         }
@@ -239,7 +243,7 @@ public class JDiffPanel<T> extends JPanel {
 
         int offset = mCurrentLine - 1;
 
-        if (offset <= mFirstChange) {
+        if (offset < mFirstChange) {
             offset = size - 1;
         }
 
@@ -247,10 +251,10 @@ public class JDiffPanel<T> extends JPanel {
             DiffType type = valueList.get(i).type();
             if (!DiffType.EQUAL.equals(type)) {
 
-//                //to jump blocks of changes
-//                if (i != 0 && type.equals(valueList.get(i - 1).type())) {
-//                    continue;
-//                }
+                //to jump blocks of changes
+                if (i != 0 && type.equals(valueList.get(i - 1).type())) {
+                    continue;
+                }
 
                 mCurrentLine = i;
 
@@ -287,9 +291,9 @@ public class JDiffPanel<T> extends JPanel {
             if (!DiffType.EQUAL.equals(type)) {
 
 //                //to jump blocks of changes
-//                if (i != 0 && type.equals(valueList.get(i - 1).type())) {
-//                    continue;
-//                }
+                if (i != 0 && type.equals(valueList.get(i - 1).type())) {
+                    continue;
+                }
 
                 mCurrentLine = i;
 
