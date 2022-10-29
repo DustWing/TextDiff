@@ -1,56 +1,53 @@
 package org.example.ui;
 
-import org.example.diff.DiffChange;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import java.awt.*;
-import java.util.List;
 
-public class JInfoTextPane<T> extends JTextPane {
-    private final List<DiffChange<T>> mValueList;
+public class JInfoTextPane extends JTextPane {
 
-    public JInfoTextPane(List<DiffChange<T>> mValueList) {
-        this.mValueList = mValueList;
-        init();
-    }
 
-    private void init() {
+    private final Style DELETE;
+    private final Style INSERT;
+
+
+    public JInfoTextPane() {
 
         super.setBorder(new EmptyBorder(new Insets(10, 10, 10, 10)));
         super.setMargin(new Insets(5, 5, 5, 5));
 
-        for (int i = 0; i < mValueList.size(); i++) {
 
-            DiffChange<T> tDiffChange = mValueList.get(i);
-            int line = i+1;
-            if (i == mValueList.size() - 1) {
+        final StyledDocument styledDocument = this.getStyledDocument();
+        DELETE = styledDocument.addStyle("DELETE", null);
+        StyleConstants.setBackground(DELETE, Color.PINK);
 
-                switch (tDiffChange.type()) {
-                    case EQUAL -> appendToPane(String.valueOf(line));
-                    case INSERT -> appendToPane(line + "+");
-                    case DELETE -> appendToPane(line + "-");
-                }
+        INSERT = styledDocument.addStyle("INSERT", null);
+        StyleConstants.setBackground(INSERT, Color.GREEN);
 
-            } else {
-
-                switch (tDiffChange.type()) {
-                    case EQUAL -> appendToPane(line + "\n");
-                    case INSERT -> appendToPane(line + "+" + "\n");
-                    case DELETE -> appendToPane(line + "-" + "\n");
-                }
-            }
-        }
-
-        setEditable(false);
     }
 
-    private void appendToPane(String msg) {
+
+    public void appendToPane(String msg) {
+        appendToPane(msg, null);
+    }
+
+    public void appendToPaneInsert(String msg) {
+        appendToPane(msg, INSERT);
+    }
+
+    public void appendToPaneDel(String msg) {
+        appendToPane(msg, DELETE);
+
+    }
+
+    private void appendToPane(String msg, Style style) {
         try {
             StyledDocument styledDocument = this.getStyledDocument();
-            styledDocument.insertString(styledDocument.getLength(), msg, null);
+            styledDocument.insertString(styledDocument.getLength(), msg, style);
         } catch (BadLocationException e) {
             throw new RuntimeException(e);
         }

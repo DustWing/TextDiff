@@ -9,7 +9,7 @@ public class DiffUtil {
 
     public static <T> List<DiffChange<T>> createDiff(List<T> left, List<T> right) {
 
-        if(left.isEmpty() || right.isEmpty()){
+        if (left.isEmpty() || right.isEmpty()) {
             return List.of();
         }
 
@@ -63,45 +63,34 @@ public class DiffUtil {
 
         while (i != 0 || j != 0) {
 
-            if (left.get(i - 1).equals(right.get(j - 1))) {
+            if (i == 0) {
                 diffChanges.add(
-                        new DiffChange<>(
-                                i,
-                                j,
-                                DiffType.EQUAL,
-                                right.get(j - 1),
-                                left.get(i - 1)
-                        )
+                        new DiffChange<>(i, j, DiffType.INSERT, right.get(j - 1), left.get(i))
+                );
+                j -= 1;
+            } else if (j == 0) {
+                diffChanges.add(
+                        new DiffChange<>(i, j, DiffType.DELETE, right.get(j), left.get(i - 1))
+                );
+                i -= 1;
+            } else if (left.get(i - 1).equals(right.get(j - 1))) {
+                diffChanges.add(
+                        new DiffChange<>(i, j, DiffType.EQUAL, right.get(j - 1), left.get(i - 1))
                 );
                 i -= 1;
                 j -= 1;
             } else if (matrix[i - 1][j] <= matrix[i][j - 1]) {
 
                 diffChanges.add(
-                        new DiffChange<>(
-                                i,
-                                j,
-                                DiffType.INSERT,
-                                right.get(j - 1),
-                                left.get(i - 1)
-                        )
+                        new DiffChange<>(i, j, DiffType.INSERT, right.get(j - 1), left.get(i - 1))
                 );
                 j -= 1;
             } else {
-
                 diffChanges.add(
-                        new DiffChange<>(
-                                i,
-                                j + 1,
-                                DiffType.DELETE,
-                                right.get(j),
-                                left.get(i - 1)
-                        )
+                        new DiffChange<>(i, j + 1, DiffType.DELETE, right.get(j), left.get(i - 1))
                 );
                 i -= 1;
             }
-
-
         }
 
         //reverse list since we start from bottom

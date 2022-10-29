@@ -1,26 +1,24 @@
 package org.example.ui;
 
-import org.example.diff.DiffChange;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 import java.awt.*;
-import java.util.List;
 
-public class JRightTextPane<T> extends JTextPane {
+public class JRightTextPane extends JTextPane {
 
-    private final List<DiffChange<T>> mValueList;
 
     private final Style INSERT;
-    private final Style DEFAULT;
 
 
-    public JRightTextPane(List<DiffChange<T>> valueList) {
+    public JRightTextPane() {
         super();
-        this.mValueList = valueList;
+        super.setBorder(new EmptyBorder(new Insets(10, 10, 10, 10)));
+        super.setMargin(new Insets(5, 5, 5, 5));
+
 
         final StyledDocument styledDocument = this.getStyledDocument();
 
@@ -28,52 +26,26 @@ public class JRightTextPane<T> extends JTextPane {
         StyleConstants.setBackground(INSERT, Color.GREEN);
 
 
-        DEFAULT = styledDocument.addStyle("UPDATE", null);
-        StyleConstants.setForeground(DEFAULT, Color.BLACK);
-
-        init();
-
     }
 
-    private void init() {
+    public void appendToPane(String msg) {
+        appendToPane(msg, null);
+    }
 
-        super.setBorder(new EmptyBorder(new Insets(10, 10, 10, 10)));
-        super.setMargin(new Insets(5, 5, 5, 5));
-
-
-        for (int i = 0; i < mValueList.size(); i++) {
-
-            DiffChange<T> tDiffChange = mValueList.get(i);
-
-            String s = mValueList.get(i).newValue() == null ? "" : mValueList.get(i).newValue().toString();
-
-            switch (tDiffChange.type()) {
-                case EQUAL -> addNewLine(s, DEFAULT);
-                case INSERT -> addNewLine(s, INSERT);
-                case DELETE -> addNewLine("", null);
-            }
-
-            if (i == mValueList.size() - 1) {
-                try {
-                    getDocument().remove(getDocument().getLength() - 1, 1);
-                } catch (BadLocationException e) {
-                    throw new RuntimeException(e);
-                }
-
-            }
+    public void appendToPaneNew(String msg) {
+        if (msg.isBlank()) {
+            msg = "\t\n";
         }
-
-        setEditable(false);
+        appendToPane(msg, INSERT);
     }
 
-    private void addNewLine(String msg, Style style) {
+    private void appendToPane(String msg, Style style) {
         try {
             StyledDocument styledDocument = this.getStyledDocument();
-            styledDocument.insertString(styledDocument.getLength(), msg + "\n", style);
+            styledDocument.insertString(styledDocument.getLength(), msg , style);
         } catch (BadLocationException e) {
             throw new RuntimeException(e);
         }
-
     }
 
 }
