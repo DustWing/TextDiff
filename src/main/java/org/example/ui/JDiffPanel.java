@@ -56,7 +56,7 @@ public class JDiffPanel<T> extends JPanel {
         final JNoWrapPanel leftPanel = new JNoWrapPanel(mJLeftTestPane);
         final JScrollPane leftScrollPane = new JScrollPane(leftPanel);
         leftScrollPane.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_ALWAYS);
-        leftScrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        leftScrollPane.getVerticalScrollBar().setUnitIncrement(32);
 
 
         final JNoWrapPanel infoPanel = new JNoWrapPanel(mJInfoTextPane);
@@ -69,7 +69,7 @@ public class JDiffPanel<T> extends JPanel {
         final JNoWrapPanel rightPanel = new JNoWrapPanel(mJRightTextPane);
         final JScrollPane rightScroll = new JScrollPane(rightPanel);
         rightScroll.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_ALWAYS);
-        rightScroll.getVerticalScrollBar().setUnitIncrement(16);
+        rightScroll.getVerticalScrollBar().setUnitIncrement(32);
 
 
         leftScrollPane.getVerticalScrollBar().addAdjustmentListener(
